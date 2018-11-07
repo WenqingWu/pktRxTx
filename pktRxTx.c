@@ -664,7 +664,7 @@ int main(int argc, char *argv[])
 #endif
     {
 		printf("Rx Thread creation failed\n");
-		exit(EXIT_FAILURE);
+		goto outdoor;
 	}
 
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
@@ -684,7 +684,7 @@ int main(int argc, char *argv[])
             printf("> ");
             scanf("%s", cmd);
 		    if (!memcmp((void *)cmd, (void *)"quit", 4))
-                exit(0);
+                goto outdoor;
 
             scanf("%d", &num);
 
@@ -703,5 +703,7 @@ int main(int argc, char *argv[])
     WaitForSingleObject(hThread, INFINITE);
 #endif    
 
+outdoor:
+	pcap_close(handle);
 	return 0;
 }
