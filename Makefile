@@ -26,7 +26,7 @@ else
 	LDFLAGS :=
 #	PREFIX := x86
 	
-	CFLAGS := -g -O
+	CFLAGS := -g -O -Wall
 	LDFLAGS += $(LDLIBS)
 endif
 

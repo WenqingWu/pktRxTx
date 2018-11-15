@@ -181,7 +181,6 @@ send_packet(char *str, int len)
 	struct pseudo_header psh;
 	unsigned short payload_len;
 	int i = 0;
-	long ran;
 
 	pkt[PAYLOAD_OFFSET] = need_ack;
 
@@ -298,8 +297,8 @@ static void
 prepare_header(const char *name)
 {
 	struct ethhdr *eth = (struct ethhdr *) pkt;
-	unsigned long src_addr;
-	char dest_addr[16];
+	//unsigned long src_addr;
+	//char dest_addr[16];
 	int i;
 
 #if MAC_ADDR_FIX
@@ -347,6 +346,7 @@ prepare_header(const char *name)
 	tcph.dest = htons(50001);
 	tcph.seq = 0;
 	tcph.ack_seq = 0;
+	tcph.res1 = 0;
 	tcph.doff = 5;  //tcp header size
 	tcph.fin = 0;
 	tcph.syn = 0;
@@ -620,7 +620,6 @@ int get_options(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	int i;
 
 	printf("pktRxTx: build at %s, %s\n", __DATE__, __TIME__);
 #ifndef WIN32
