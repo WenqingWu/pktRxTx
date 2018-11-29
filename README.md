@@ -51,6 +51,12 @@ When running on listening mode, pktRxTx just keeps listening interface, and pars
 For example, pktRxTx will send 5 packets when user  types in "send 5".
 
 
+### benchmark mode
+
+Benchmark mode could send packets in a stable rate within a given time period.
+
+For example. "test 60" means keeping sending packets for 60 seconds.
+
 ## Build and Running
 
 ###  Linux/Mac

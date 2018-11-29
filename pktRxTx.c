@@ -264,8 +264,8 @@ receive_packet(void *arg)
 		/* this packet is not for me!*/
 //		if (memcmp((void *)pkt_data, (void *)src_mac_addr, 6))
 //			continue;
-#if 0
-		memcpy(rcvdata, (pkt_data + PAYLOAD_OFFSET + 1), 6);
+#if 1
+		memcpy(rcvdata, (pkt_data + PAYLOAD_OFFSET), 6);
 		rcvdata[6] = '\0';
 		printf("rcv: %s\n", rcvdata);
 		/* give a response */
@@ -380,7 +380,7 @@ time_wait(int us) {
 
 	LARGE_INTEGER liPerfNow = { 0 };
 
-	for (;rxtx_exit != 0;)
+	for (;;)
 	{
 		QueryPerformanceCounter(&liPerfNow);
 		double time = (((liPerfNow.QuadPart -
