@@ -370,11 +370,6 @@ time_wait(int us) {
 	}
 
 #else
-
-	LARGE_INTEGER  large_interger = {0};
-	double dff;
-	long long  c1, c2;
-
 	LARGE_INTEGER m_liPerfFreq = {0};
 	if (!QueryPerformanceFrequency(&m_liPerfFreq)) {
 		printf("QueryPerformanceFrequency not support for this machine.\n");
