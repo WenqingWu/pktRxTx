@@ -264,7 +264,7 @@ receive_packet(void *arg)
 		/* this packet is not for me!*/
 //		if (memcmp((void *)pkt_data, (void *)src_mac_addr, 6))
 //			continue;
-#if 1
+#if 0
 		memcpy(rcvdata, (pkt_data + PAYLOAD_OFFSET), 6);
 		rcvdata[6] = '\0';
 		printf("rcv: %s\n", rcvdata);
@@ -286,9 +286,9 @@ receive_packet(void *arg)
 			}
 			continue;
 		}
-		/* listening mode */
+		/* listening mode or benchmark mode*/
 		rx_cnt++;
-		if (rx_cnt >= 10000) {
+		if (rx_cnt >= 100000) {
 			printf("10000 packets arrive.\n");
 			rx_cnt = 0;
 		}
