@@ -194,6 +194,10 @@ send_packet(char *str, int len)
 
 	/* fiexed payload length for now */
 	payload_len = 65;
+	if (payload_len < len) {
+		printf("length of string exscees length of layload.\n");
+		return ;
+	}
 
 	/* *
 	* Ip checksum
@@ -229,7 +233,8 @@ send_packet(char *str, int len)
 	/* set payload:
 	* payload format: 'str' 0x11 0x11 0x11 ..."
 	* */
-	memcpy((pkt + PAYLOAD_OFFSET), str, len);
+	if (len > 0)
+		memcpy((pkt + PAYLOAD_OFFSET), str, len);
 	for (i = (PAYLOAD_OFFSET + len); i < (PAYLOAD_OFFSET + payload_len); i++)
 		pkt[i] = 0x11;
 
