@@ -294,7 +294,7 @@ receive_packet(void *arg)
 		/* listening mode or benchmark mode*/
 		rx_cnt++;
 		if (rx_cnt >= 100000) {
-			printf("10000 packets arrive.\n");
+			printf("100000 packets arrive.\n");
 			rx_cnt = 0;
 		}
 	}
