@@ -617,6 +617,9 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
+	if (signal(SIGINT, sig_handler) == SIG_ERR)
+		printf("\ncan't catch SIGINT\n");
+
 	printf("%02x:%02x:%02x:%02x:%02x:%02x ... listening on %s\n",
 		src_mac_addr[0], src_mac_addr[1], src_mac_addr[2],
 		src_mac_addr[3], src_mac_addr[4] & 0xff, src_mac_addr[5], dev);
@@ -625,24 +628,27 @@ int main(int argc, char *argv[])
 		dest_mac_addr[0], dest_mac_addr[1], dest_mac_addr[2],
 		dest_mac_addr[3], dest_mac_addr[4] & 0xff, dest_mac_addr[5]);
 
+	if (mode == ECHO_MODE) {
 #ifndef WIN32
-	if (pthread_create(&rx_thread, NULL, receive_packet, NULL))
+		if (pthread_create(&rx_thread, NULL, receive_packet, NULL))
 #else
-	if ((hThread = (HANDLE)_beginthreadex(NULL, 0, (unsigned int(__stdcall *)(void *))receive_packet, NULL, 0, &rx_thread)) == 0)
+		if ((hThread = (HANDLE)_beginthreadex(NULL, 0, (unsigned int(__stdcall *)(void *))receive_packet, NULL, 0, &rx_thread)) == 0)
 #endif
-	{
-		printf("Rx Thread creation failed\n");
-		goto outdoor;
+		{
+			printf("Rx Thread creation failed\n");
+			goto outdoor;
+		}
+#ifndef WIN32    
+		pthread_join(rx_thread, NULL);
+#else
+		WaitForSingleObject(hThread, INFINITE);
+#endif    
 	}
-
-	if (signal(SIGINT, sig_handler) == SIG_ERR)
-		printf("\ncan't catch SIGINT\n");
-
 	/* *
 	* listening mode
 	* keep receiving command from user
 	* */
-	if (mode == LISTENING_MODE) {
+	else if (mode == LISTENING_MODE) {
 		char cmd[8];
 		int num;
 
@@ -668,7 +674,7 @@ int main(int argc, char *argv[])
 	* benchmark mode
 	* keep receiving command from user
 	* */
-	if (mode == BENCHMARK_MODE) {
+	else if (mode == BENCHMARK_MODE) {
 		char cmd[8];
 		int time;
 
@@ -709,13 +715,11 @@ int main(int argc, char *argv[])
 
 #endif
 		} while (!rxtx_exit);
+	}else {
+		printf ("invalid running mode.\n");
+		goto outdoor;
 	}
 
-#ifndef WIN32    
-	pthread_join(rx_thread, NULL);
-#else
-	WaitForSingleObject(hThread, INFINITE);
-#endif    
 
 outdoor:
 	pcap_close(handle);
