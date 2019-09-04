@@ -266,6 +266,9 @@ receive_packet(void *arg)
 		if (res == 0)
 			continue;
 
+		/* this packet is not for me!*/	
+//		if (memcmp((void *)pkt_data, (void *)src_mac_addr, 6))	
+//			continue;
 #if 0
 		memcpy(rcvdata, (pkt_data + PAYLOAD_OFFSET), 6);
 		rcvdata[6] = '\0';
