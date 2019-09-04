@@ -181,8 +181,8 @@ log_packets(FILE ** fp, char *fname, int *fidx, const u_char * buf, int len)
 		fflush(*fp);
 }
 /* *
-* @ str    : content of first "len" bytes of payload
-* @ len    : length of str
+* @param str    : content of first "len" bytes of payload
+* @param len    : length of str
 * */
 void
 send_packet(char *str, int len)
@@ -266,9 +266,6 @@ receive_packet(void *arg)
 		if (res == 0)
 			continue;
 
-		/* this packet is not for me!*/
-//		if (memcmp((void *)pkt_data, (void *)src_mac_addr, 6))
-//			continue;
 #if 0
 		memcpy(rcvdata, (pkt_data + PAYLOAD_OFFSET), 6);
 		rcvdata[6] = '\0';
@@ -292,11 +289,6 @@ receive_packet(void *arg)
 			continue;
 		}
 		/* listening mode or benchmark mode*/
-		rx_cnt++;
-		if (rx_cnt >= 100000) {
-			printf("100000 packets arrive.\n");
-			rx_cnt = 0;
-		}
 	}
 #ifdef WIN32
 	return 1;
@@ -400,7 +392,7 @@ static void
 usage(void)
 {
 	printf("\n"
-		"usage: txPckt [OPTION] [OPTION ifname]\n"
+		"usage: pktRxTx [OPTION] [OPTION ifname]\n"
 		"\n"
 		"[OPTION]\n"
 		"\t-h : print usage information\n"
@@ -412,7 +404,7 @@ usage(void)
 		"\t-i <interface>: network interface to send/receive packets\n "
 		"\t-n <number packets>: number of packets for a sending action, default:3\n"
 		"\t-b : log packet content to file as binary mode\n"
-		"\t-f <filenameprefix> : may include directory, write packets content\n"
+		"\t-f <filenameprefix> (Note: Not used for now): may include directory, write packets content\n"
 		"\t\tto ./dir/<filename>-tx-xxx.log\n\n");
 }
 
