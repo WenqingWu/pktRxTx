@@ -1,4 +1,7 @@
 # ELF
 pktRxTx
-
-pktRxTx.dSYM/
+.DS_Store
+*.dSYM/
+*.obj
+*.elf
+*.swp
