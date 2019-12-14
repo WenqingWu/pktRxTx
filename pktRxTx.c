@@ -93,7 +93,14 @@ void sig_handler(int signo)
 		if (rx_f)
 			fclose(rx_f);
 
-		rxtx_exit = 1;
+        rxtx_exit = 1;
+
+        if (mode == ECHO_MODE) {
+            printf("\n**************************************\n");
+            printf("  Total received: %d packets", rx_cnt);
+            printf("\n**************************************\n");
+        }
+        
 		exit(EXIT_SUCCESS);
 	}
 }
@@ -285,11 +292,11 @@ receive_packet(void *arg)
 			memcpy((void *)pkt_data, (const void *)(pkt_data + 6), 6);
 			memcpy((void *)(pkt_data + 6), (const void *)tmp_mac_addr, 6);
 
-			/* Send down the packet */
+			/* Send the packet back*/
 			if (pcap_sendpacket(handle, (const unsigned char *)pkt_data, pkthdr->len) != 0) {
 				fprintf(stderr, "Error sending the packet: %s\n", pcap_geterr(handle));
 			}
-			continue;
+			rx_cnt++;
 		}
 		/* listening mode or benchmark mode*/
 	}
