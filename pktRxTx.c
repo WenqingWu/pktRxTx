@@ -68,7 +68,7 @@ int mode = ECHO_MODE;          /* running mode, default: echo mode */
 int interval = 1;      /* interval  time between two sending action*/
 int sendnum = 3;       /* number of packets for a sending request*/
 
-					   /* fixed MAC address for now */
+/* fixed MAC address for now */
 unsigned char src_mac_addr[6] = { 0x80, 0xfa, 0x5b, 0x33, 0x56, 0xef };
 unsigned char dest_mac_addr[6] = { 0x00, 0x0e, 0xc6, 0xd7, 0x77, 0x7b };
 
@@ -96,11 +96,11 @@ void sig_handler(int signo)
 		rxtx_exit = 1;
 		exit(EXIT_SUCCESS);
 	}
-	}
+}
 
-/*
-* Generic checksum calculation function
-*/
+/* *
+ * Description: Generic checksum calculation function
+ * */
 unsigned short
 csum(unsigned short *ptr, int nbytes)
 {
@@ -109,13 +109,13 @@ csum(unsigned short *ptr, int nbytes)
 	register short answer;
 
 	sum = 0;
-	while (nbytes>1) {
+	while (nbytes > 1) {
 		sum += *ptr++;
 		nbytes -= 2;
 	}
 	if (nbytes == 1) {
 		oddbyte = 0;
-		*((u_char*)&oddbyte) = *(u_char*)ptr;
+		*((u_char *)&oddbyte) = *(u_char *)ptr;
 		sum += oddbyte;
 	}
 
@@ -123,11 +123,11 @@ csum(unsigned short *ptr, int nbytes)
 	sum = sum + (sum >> 16);
 	answer = (short)~sum;
 
-	return(answer);
+	return (answer);
 }
 
 static void
-log_packets(FILE ** fp, char *fname, int *fidx, const u_char * buf, int len)
+log_packets(FILE **fp, char *fname, int *fidx, const u_char *buf, int len)
 {
 	char outf[80];
 	int pos;
@@ -181,9 +181,9 @@ log_packets(FILE ** fp, char *fname, int *fidx, const u_char * buf, int len)
 		fflush(*fp);
 }
 /* *
-* @param str    : content of first "len" bytes of payload
-* @param len    : length of str
-* */
+ * @param str    : content of first "len" bytes of payload
+ * @param len    : length of str
+ * */
 void
 send_packet(char *str, int len)
 {
@@ -222,11 +222,11 @@ send_packet(char *str, int len)
 	psh.tcp_length = htons(sizeof(struct tcphdr) + payload_len);
 	int psize = sizeof(struct pseudo_header) + sizeof(struct tcphdr) + payload_len;
 
-	memcpy(pseudo_gram, (char*)&psh, sizeof(struct pseudo_header));
-	memcpy(pseudo_gram + sizeof(struct pseudo_header), (char*)&tcph, sizeof(struct tcphdr));
+	memcpy(pseudo_gram, (char *)&psh, sizeof(struct pseudo_header));
+	memcpy(pseudo_gram + sizeof(struct pseudo_header), (char *)&tcph, sizeof(struct tcphdr));
 	memcpy(pseudo_gram + sizeof(struct pseudo_header) + sizeof(struct tcphdr), &pkt[PAYLOAD_OFFSET], payload_len);
 
-	tcph.check = csum((unsigned short*)pseudo_gram, psize);
+	tcph.check = csum((unsigned short *)pseudo_gram, psize);
 
 	memcpy((pkt + TCPHDR_OFFSET), (char *)&tcph, sizeof(struct tcphdr));
 
@@ -265,17 +265,17 @@ receive_packet(void *arg)
 		}
 		if (res == 0)
 			continue;
-
-		/* this packet is not for me!*/	
-//		if (memcmp((void *)pkt_data, (void *)src_mac_addr, 6))	
-//			continue;
 #if 0
+		/* this packet is not for me!*/	
+		if (memcmp((void *)pkt_data, (void *)src_mac_addr, 6))	
+			continue;
+
 		memcpy(rcvdata, (pkt_data + PAYLOAD_OFFSET), 6);
 		rcvdata[6] = '\0';
 		printf("rcv: %s\n", rcvdata);
 		/* give a response */
-//		if (memcmp((void*)rcvdata, (void *)"ackPkt", 6))
-//			send_packet("ackPkt", 6);
+		if (memcmp((void*)rcvdata, (void *)"ackPkt", 6))
+			send_packet("ackPkt", 6);
 #endif
 		/* echo mode */
 		if (mode == ECHO_MODE) {
@@ -298,7 +298,11 @@ receive_packet(void *arg)
 #endif
 }
 
-/* Initialize headers */
+/* *
+ * Description: Initialize headers 
+ * 
+ * @param name device name
+ * */
 static void
 prepare_header(const char *name)
 {
@@ -350,14 +354,16 @@ prepare_header(const char *name)
 	tcph.psh = 0;
 	tcph.ack = 1;
 	tcph.urg = 0;
-	tcph.window = htons(5840); /* maximum allowed window size */
+	tcph.window = htons(5840);  //maximum allowed window size 
 	tcph.check = 0;             //leave checksum 0 now, filled later by pseudo header
 	tcph.urg_ptr = 0;
 	memcpy((pkt + TCPHDR_OFFSET), (char *)&tcph, sizeof(struct tcphdr));
 }
 /* *
-* delay for xx microseconds
-* */
+ * Description: delay for a while
+ *
+ * @param us sleeping time (microseconds)
+ * */
 void
 time_wait(int us) {
 #ifndef WIN32
@@ -715,6 +721,11 @@ int main(int argc, char *argv[])
 		goto outdoor;
 	}
 
+#ifndef WIN32
+	pthread_join(rx_thread, NULL);
+#else
+	WaitForSingleObject(hThread, INFINITE);
+#endif
 
 outdoor:
 	pcap_close(handle);
