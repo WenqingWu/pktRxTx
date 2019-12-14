@@ -82,7 +82,15 @@ void sig_handler(int signo)
 #else
 	if (signo == SIGINT) {
 #endif
-		printf("received SIGINT\n");
+        printf("received SIGINT\n");
+        
+        rxtx_exit = 1;
+
+        if (mode == ECHO_MODE) {
+            printf("\n**************************************\n");
+            printf("  Total received: %d packets", rx_cnt);
+            printf("\n**************************************\n\n");
+        }
 
 		if (handle)
 			pcap_close(handle);
@@ -92,14 +100,6 @@ void sig_handler(int signo)
 
 		if (rx_f)
 			fclose(rx_f);
-
-        rxtx_exit = 1;
-
-        if (mode == ECHO_MODE) {
-            printf("\n**************************************\n");
-            printf("  Total received: %d packets", rx_cnt);
-            printf("\n**************************************\n");
-        }
         
 		exit(EXIT_SUCCESS);
 	}
